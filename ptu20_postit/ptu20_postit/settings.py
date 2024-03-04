@@ -20,7 +20,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+<<<<<<< HEAD
 SECRET_KEY = 'django-insecure-p)0f@^n$p%s%e5g+mwa0m4v2g^)1v%7w!my&8j%$686lwc=3b_'
+=======
+SECRET_KEY = 'django-insecure-6w4+00$q3he5mw=ry4+p$3$s9qb5p_9r+h)g*pxt%9cwzvb4s5'
+>>>>>>> origin/main
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,6 +35,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+<<<<<<< HEAD
+=======
+    'postit_api',
+    'rest_framework',
+>>>>>>> origin/main
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -123,6 +132,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 try:
-    from .local_settings import *
-except ImportError:
-    pass
+    from . import local_settings
+except:
+    print('warning: no local settings')
