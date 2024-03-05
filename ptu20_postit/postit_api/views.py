@@ -1,5 +1,6 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, mixins, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 from django.utils.translation import gettext_lazy as _
 from . import models, serializers
 
@@ -38,7 +39,6 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CommentList(generics.ListCreateAPIView):
-    queryset = models.Comment.objects.all()
     serializer_class = serializers.CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -47,7 +47,7 @@ class CommentList(generics.ListCreateAPIView):
         serializer.save(user=self.request.user, post=post)
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = models.Comment.objects.all()
         post = models.Post.objects.get(pk=self.kwargs['pk'])
         return queryset.filter(post=post)
 
@@ -74,3 +74,26 @@ class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
             return self.update(request, *args, **kwargs)
         else:
             raise ValidationError(_("You can only edit your own content."))
+
+
+class PostLikeCreate(generics.CreateAPIView, mixins.DestroyModelMixin):
+    serializer_class = serializers.PostLikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+        
+    def get_queryset(self):
+        queryset = models.PostLike.objects.all()
+        post = models.Post.objects.get(pk=self.kwargs['pk'])
+        return queryset.filter(post=post, user=self.request.user)
+
+    def perform_create(self, serializer):
+        if self.get_queryset().exists():
+            raise ValidationError(_("You already like this."))
+        post = models.Post.objects.get(pk=self.kwargs['pk'])
+        serializer.save(post=post, user=self.request.user)
+    
+    def delete(self, request, *args, **kwargs):
+        if self.get_queryset().exists():
+            self.get_queryset().delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise ValidationError(_("You must already like this to unlike this."))
