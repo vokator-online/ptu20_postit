@@ -1,8 +1,27 @@
 from rest_framework import generics, permissions, mixins, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from . import models, serializers
+
+
+class UserCreate(generics.CreateAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = serializers.UserSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class UserDelete(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        if request.user:
+            request.user.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise ValidationError(_("User does not exist."))
 
 
 class PostList(generics.ListCreateAPIView):
