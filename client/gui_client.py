@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import backend
 from gui_post_detail import post_detail
+from gui_post_create import post_create
 
 sg.theme("dark")
 sg.set_options(font="sans-serif 20")
@@ -26,7 +27,8 @@ main_layout = [
         ),
     ],
     [
-        sg.Button("SHOW", key="-DETAIL-")
+        sg.Button("SHOW", key="-DETAIL-"),
+        sg.Button("+ NEW POST", key="-NEW-", disabled=True),
     ],
     [
         sg.Text("", key="-DEBUG-"),
@@ -49,6 +51,11 @@ while True:
     if event == "-DETAIL-" and values["-LIST-"]:
         for selected in values["-LIST-"]:
             post_detail(post_list[selected][0], main_window, auth_token)
+    if event == "-NEW-":
+        new_post = post_create(main_window, auth_token)
+        if new_post:
+            post_list = backend.get_post_list()
+            main_window["-LIST-"].update(post_list)
     if event == "-LOGINOUT-":
         if auth_token == '':
             try:
@@ -60,9 +67,11 @@ while True:
                 main_window["-LOGINOUT-"].update("LOGOUT")
                 main_window["-USERNAME-"].update(disabled=True)
                 main_window["-PASSWORD-"].update(disabled=True)
+                main_window["-NEW-"].update(disabled=False)
         else:
             auth_token = ''
             main_window["-USERNAME-"].update(disabled=False)
             main_window["-PASSWORD-"].update(disabled=False)
             main_window["-LOGINOUT-"].update("LOGIN")
+            main_window["-NEW-"].update(disabled=True)
         main_window["-DEBUG-"].update(auth_token)
