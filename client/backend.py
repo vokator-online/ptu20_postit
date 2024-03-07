@@ -6,6 +6,7 @@ PORT = 8000
 CONNECTION_CLASS = http.client.HTTPConnection
 
 conn = CONNECTION_CLASS(HOST, PORT)
+# conn.debuglevel = 1
 
 headers = {
     "Accept": "*/*",
@@ -29,7 +30,11 @@ def login(username: str, password: str, conn:CONNECTION_CLASS=conn, headers:dict
         raise ConnectionError(f"Connection Error {response.status}.")
 
 def auth_headers(headers: dict[str, str], auth_token: str) -> dict[str, str]:
-    headers.update({"Authorization": f"Token {auth_token}"})
+    if len(auth_token) > 0:
+        headers["Authorization"] = f"Token {auth_token}"
+    else:
+        if "Authorization" in headers:
+            del headers["Authorization"]
     return headers
 
 def post_like(pk: int, auth_token: str, conn:CONNECTION_CLASS=conn, headers:dict[str, str]=headers) -> dict[str, str]:
@@ -39,7 +44,6 @@ def post_like(pk: int, auth_token: str, conn:CONNECTION_CLASS=conn, headers:dict
     if response.status >= 200 and response.status < 400:
         like_detail = json.loads(response_json)
         return like_detail
-    
     else:
         raise ConnectionError(f"Connection Error {response.status}.")    
 
