@@ -22,7 +22,6 @@ def login(username: str, password: str, conn:CONNECTION_CLASS=conn, headers:dict
     conn.request("POST", "/api-token-auth/", payload, headers)
     response = conn.getresponse()
     response_json = response.read()
-    print(response_json)
     if response.status == 200:
         auth_data = json.loads(response_json)
         return auth_data['token']
@@ -36,6 +35,20 @@ def auth_headers(headers: dict[str, str], auth_token: str) -> dict[str, str]:
         if "Authorization" in headers:
             del headers["Authorization"]
     return headers
+
+def post_create(title: str, body: str, auth_token: str, conn:CONNECTION_CLASS=conn, headers:dict[str, str]=headers) -> dict[str, str]:
+    payload = json.dumps({
+        'title': title,
+        'body': body,
+    })
+    conn.request("POST", f"/", payload, headers=auth_headers(headers, auth_token))
+    response = conn.getresponse()
+    response_json = response.read()
+    if response.status >= 200 and response.status < 400:
+        created_post = json.loads(response_json)
+        return created_post
+    else:
+        raise ConnectionError(f"Connection Error {response.status}.")    
 
 def post_like(pk: int, auth_token: str, conn:CONNECTION_CLASS=conn, headers:dict[str, str]=headers) -> dict[str, str]:
     conn.request("POST", f"/{pk}/like/", headers=auth_headers(headers, auth_token))
