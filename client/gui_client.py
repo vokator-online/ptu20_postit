@@ -1,3 +1,4 @@
+import tkinter
 import PySimpleGUI as sg
 import backend
 from gui_post_detail import post_detail
