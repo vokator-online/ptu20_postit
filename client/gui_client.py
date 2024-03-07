@@ -1,8 +1,11 @@
 import PySimpleGUI as sg
 import backend
+from gui_post_detail import post_detail
 
 sg.theme("dark")
 sg.set_options(font="sans-serif 20")
+
+post_list = backend.get_post_list()
 
 main_layout = [
     [
@@ -15,11 +18,15 @@ main_layout = [
     ],
     [
         sg.Table(
-            values=backend.get_post_list(), 
+            values=post_list, 
             headings=['ID', 'Title', 'User', 'Created/Updated', 'Likes', 'Comments'],
             col_widths=[5, 30, 10, 15, 5, 5],
-            justification='center', auto_size_columns=False,
+            justification='c', auto_size_columns=False,
+            key="-LIST-",
         ),
+    ],
+    [
+        sg.Button("SHOW", key="-DETAIL-")
     ],
     [
         sg.Text("", key="-DEBUG-"),
@@ -39,6 +46,9 @@ while True:
     event, values = main_window.read()
     if event in [sg.WINDOW_CLOSED, "-EXIT-"]:
         break
+    if event == "-DETAIL-" and values["-LIST-"]:
+        for selected in values["-LIST-"]:
+            post_detail(post_list[selected][0], main_window, auth_token)
     if event == "-LOGINOUT-":
         if auth_token == '':
             try:

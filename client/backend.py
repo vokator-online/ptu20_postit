@@ -20,22 +20,47 @@ def login(username: str, password: str, conn:CONNECTION_CLASS=conn, headers:dict
     })
     conn.request("POST", "/api-token-auth/", payload, headers)
     response = conn.getresponse()
-    response_data = response.read()
-    response_json = json.loads(response_data)
+    response_json = response.read()
+    print(response_json)
     if response.status == 200:
-        return response_json['token']
+        auth_data = json.loads(response_json)
+        return auth_data['token']
+    else:
+        raise ConnectionError(f"Connection Error {response.status}.")
+
+def auth_headers(headers: dict[str, str], auth_token: str) -> dict[str, str]:
+    headers.update({"Authorization": f"Token {auth_token}"})
+    return headers
+
+def post_like(pk: int, auth_token: str, conn:CONNECTION_CLASS=conn, headers:dict[str, str]=headers) -> dict[str, str]:
+    conn.request("POST", f"/{pk}/like/", headers=auth_headers(headers, auth_token))
+    response = conn.getresponse()
+    response_json = response.read()
+    if response.status >= 200 and response.status < 400:
+        like_detail = json.loads(response_json)
+        return like_detail
+    
+    else:
+        raise ConnectionError(f"Connection Error {response.status}.")    
+
+def get_post_detail(pk: int, conn:CONNECTION_CLASS=conn, headers:dict[str, str]=headers):
+    conn.request("GET", f"/{pk}/", headers=headers)
+    response = conn.getresponse()
+    response_json = response.read()
+    if response.status == 200:
+        post_detail = json.loads(response_json)
+        return post_detail
     else:
         raise ConnectionError(f"Connection Error {response.status}.")
 
 def get_post_list(conn:CONNECTION_CLASS=conn, headers:dict[str, str]=headers) -> list[tuple[str]]:
     conn.request("GET", "/", headers=headers)
     response = conn.getresponse()
-    response_data = response.read()
-    response_json = json.loads(response_data)
+    response_json = response.read()
     if response.status == 200:
-        print(response_json)
+        data = json.loads(response_json)
         post_list = []
-        for post_dict in response_json['results']:
+        for post_dict in data['results']:
             post_list.append((
                 post_dict['id'], 
                 post_dict['title'], 
