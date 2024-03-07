@@ -50,13 +50,19 @@ def post_create(title: str, body: str, auth_token: str, conn:CONNECTION_CLASS=co
     else:
         raise ConnectionError(f"Connection Error {response.status}.")    
 
-def post_like(pk: int, auth_token: str, conn:CONNECTION_CLASS=conn, headers:dict[str, str]=headers) -> dict[str, str]:
+def post_like(pk: int, auth_token: str, conn:CONNECTION_CLASS=conn, headers:dict[str, str]=headers) -> dict[str, str] | None:
     conn.request("POST", f"/{pk}/like/", headers=auth_headers(headers, auth_token))
     response = conn.getresponse()
     response_json = response.read()
     if response.status >= 200 and response.status < 400:
         like_detail = json.loads(response_json)
         return like_detail
+    elif response.status == 400:
+        conn.request("DELETE", f"/{pk}/like/", headers=auth_headers(headers, auth_token))
+        response = conn.getresponse()
+        response_json = response.read()
+        if response.status == 204:
+            return None
     else:
         raise ConnectionError(f"Connection Error {response.status}.")    
 

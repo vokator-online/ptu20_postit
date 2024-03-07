@@ -41,7 +41,7 @@ def post_detail(post_pk: int, root_window:sg.Window, auth_token: str) -> None:
         layout, 
         element_justification='center', 
         element_padding=10, 
-        finalize=True
+        finalize=True,
     )
 
     while True:
