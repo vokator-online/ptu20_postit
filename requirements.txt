@@ -2,6 +2,9 @@ asgiref==3.7.2
 Django==5.0.2
 djangorestframework==3.14.0
 pillow==10.2.0
+pyasn1==0.5.1
+PySimpleGUI==5.0.3
 pytz==2024.1
+rsa==4.9
 sqlparse==0.4.4
 typing_extensions==4.10.0
