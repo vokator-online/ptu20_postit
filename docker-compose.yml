@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  ptu20postit:
+    build: .
+    image: ptu20postit:dev
+    container_name: ptu20postit.dev
+    tty: true
+    stdin_open: true
+    restart: always
+    ports:
+      - 8000:8000
+    volumes:
+      - ./ptu20_postit:/app
+    command: >
+      bash -c "python manage.py migrate &&
+               python manage.py collectstatic --noinput &&
+               gunicorn ptu20_postit.wsgi --bind 0.0.0.0:8000"
+  nginx:
+    build: ./nginx/
+    image: nginx:ptu20postit
+    container_name: ptu20postit.nginx
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./ptu20_postit/media:/app/media
+      - ./ptu20_postit/static:/app/static
