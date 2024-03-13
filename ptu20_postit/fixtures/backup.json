@@ -1,0 +1,28 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$720000$UgjpTpCML9v8sRm5NX0vgV$+YNS5mYyoHZV28fnWNKy3iBMKxRMqlerihb88+k91jE=",
+    "last_login": "2024-03-07T14:20:18.778Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "vokator@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2024-03-07T14:20:07.415Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "il3hj4zvj0jfzg21tq6z3mzzt9i8i6kr",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQAP-FsyE8ugIevfsNzS4sUjWQlPZk_HdD0oNeZybzFjPuW5n3zuu8JHERWpx-GWF8ch0iPbDem4ytbutCciTysF3eWuLX9Wj_BgV7GdsUgDT4zNYTkMrWRsqGOYezz9nYSSurHFgm7-OEEB0qcMEbrVwCEJ8v6Ng3ew:1riEba:R_9uY9nNKIm0m7geBw7ZUAOQQ_LPrLnR7pw6Dz1FgA4",
+    "expire_date": "2024-03-21T14:20:18.787Z"
+  }
+}
+]
