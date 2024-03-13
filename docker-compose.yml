@@ -11,10 +11,27 @@ services:
       - 8000:8000
     volumes:
       - ./ptu20_postit:/app
+    depends_on:
+      - db
+    links:
+      - db:postgres
+    env_file:
+      - .env
     command: >
-      bash -c "python manage.py migrate &&
+      bash -c "python wait_for_postgres.py &&
+               python manage.py migrate &&
                python manage.py collectstatic --noinput &&
                gunicorn ptu20_postit.wsgi --bind 0.0.0.0:8000"
+  db:
+    image: postgres
+    container_name: ptu20postit.db
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+    env_file:
+      - .env
   nginx:
     build: ./nginx/
     image: nginx:ptu20postit
