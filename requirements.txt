@@ -4,6 +4,7 @@ djangorestframework==3.14.0
 gunicorn==21.2.0
 packaging==24.0
 pillow==10.2.0
+psycopg2-binary==2.9.9
 pyasn1==0.5.1
 PySimpleGUI==5.0.3
 pytz==2024.1
